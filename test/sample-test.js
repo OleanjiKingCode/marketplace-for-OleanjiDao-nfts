@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("NFTMarket", function () {
+describe("NFTMarketPlace", function () {
   it("Should should create and sell out market items", async function () {
 
     const Market = await ethers.getContractFactory("NFTMarket")
@@ -25,7 +25,7 @@ describe("NFTMarket", function () {
 
     await market.createMarketItem(nftAddress, 1 , auctionPrice, {value: listingPrice})
     await market.createMarketItem(nftAddress, 2 , auctionPrice, {value: listingPrice})
-
+    
     // here we call all the addresses of hardhat node the 20 and specifying the one to use we call it the buyers
     // address here and the underscore is meant to omit the first one and go to the next cos the first is
     // to be used to deploy and create tokens threby making the buyer and seller addresses diifferent
