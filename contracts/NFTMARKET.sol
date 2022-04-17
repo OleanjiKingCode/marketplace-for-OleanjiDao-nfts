@@ -11,12 +11,15 @@ contract NFTMarket is ReentrancyGuard {
     Counters.Counter private _itemSold;
 
     address payable owner;
+    // sting the price for list an item
     uint256 listingPrice =0.025 ether;
 
     constructor(){
         owner =payable(msg.sender);
     }
 
+
+// this is a struct to keep tract of all the properties of a market item wen created or sold
     struct MarketItem{
         uint itemId;
         address nftContract;
@@ -26,6 +29,7 @@ contract NFTMarket is ReentrancyGuard {
         uint256 price;
         bool sold;
     }
+    // a mapping that can be used to call any marketitem
     mapping (uint256 => MarketItem) private idMarketItem;
 
     event MarketItemCreated (
@@ -37,11 +41,15 @@ contract NFTMarket is ReentrancyGuard {
         uint256 price,
         bool sold
     );
-
+// useful for thr front end to get the listing price 
     function getListingPrice() public view returns (uint256){
         return listingPrice;
     }
 
+
+// here a market item is created by supplying the contract of the already minted token
+// the token id amd the price the individual seeling it put up
+//using the nonreentranr modeifier so as this function should be prone to multiple request  security flaws
     function createMarketItem(
         address nftContract,
         uint256 tokenId,
@@ -57,11 +65,13 @@ contract NFTMarket is ReentrancyGuard {
             nftContract,
             tokenId,
             payable(msg.sender),
+            // sets the owner to zero addr as no one owns it yet
             payable(address(0)),
             price,
             false
         );
 
+// after the item as been created the ownership goes to the CA of this contract as well as the listing price
         IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
 
         emit MarketItemCreated (
@@ -78,7 +88,9 @@ contract NFTMarket is ReentrancyGuard {
 
     }
 
-      function createMarketItem(
+
+// here a sale for the market item occurs
+      function createMarketSale(
         address nftContract,
         uint256 itemId
        
@@ -86,7 +98,9 @@ contract NFTMarket is ReentrancyGuard {
         uint price = idMarketItem[itemId].price;
         uint tokenId =idMarketItem[itemId].tokenId;
         require(msg.value == price, "please submit the asking price in order to complete the purchase");
-
+// after the requirement of the price is fulfilled the listing price is then given to the owner of the contract
+// as well as the ownership goes to the caller or buyer
+// and the price is transffered to the owner of the token or seller
         idMarketItem[itemId].seller.transfer(msg.value);
 
         IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
@@ -102,7 +116,7 @@ contract NFTMarket is ReentrancyGuard {
 
 
     }
-
+// gets all the unsold items 
     function fetchMarketItems() public view returns (MarketItem[] memory) {
 
         uint itemCount = _itemIds.current();
@@ -122,7 +136,7 @@ contract NFTMarket is ReentrancyGuard {
         }
         return items;
     } 
-
+// gets all nfts that i bought
     function fetchMyNfts() public view returns (MarketItem[] memory){
         uint totalItemCount = _itemIds.current();
         uint itemCount = 0;
@@ -147,6 +161,7 @@ contract NFTMarket is ReentrancyGuard {
 
     }
 
+// gets all nft that i created
     function fetchItemsCreated() public view returns(MarketItem[] memory) {
         uint totalItemCount = _itemIds.current();
         uint itemCount = 0;
