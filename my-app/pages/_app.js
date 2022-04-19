@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 import Link from 'next/link'
+//Link helps to navigate between pages 
 
 function MyApp({ Component, pageProps }) {
   return (
@@ -10,12 +11,14 @@ function MyApp({ Component, pageProps }) {
             OleanjiFuture DAO Marketplace
           </p>
           <div className="flex mt-4">
+             {/* first link is to the index.js as it is home */}
             <Link href='/'>
               <a className="mr-6 text-blue-500">
                 Home
               </a>
             </Link>
-
+            {/* the next link is called create-items where you can create items to sell and the name 
+            here should be the same as the file name */}
             <Link href='/create-items'>
               <a className='mr-6 text-blue-500'>
                Sell Asset

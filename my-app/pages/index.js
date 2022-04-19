@@ -12,19 +12,21 @@ export default function Home() {
     loadNFTs()
   }, [])
 
-
+// this is a  function that loads and stores the array of unsold market items using the function from the 
+// NFTMarketplace smart contract 
   async function loadNFTs() {
     const provider =new ethers.providers.JsonRpcProvider()
     const tokenContract = new ethers.Contract(nftaddress,nftaddressabi,provider)
     const MarketContract = new ethers.Contract(nftmarketaddress,nftmarketaddressabi,provider)
     const data = await MarketContract.fetchMarketItems()
-
+// we then map through the data const 
     const items = await Promise.all(data.map(async i => {
       const tokenURi = await tokenContract.tokenURI(i.tokenId)
+      // we get the tokenUri and try to get all the information stored in it by using axios
       const meta = await axios.get(tokenURi)
       ////doesnt use the 18 decimals just normal
       let price =ethers.utils.formatUnits(i.price.toString(), 'ether')
-
+      //here we then pick what we need to see in the home page and put them into item the return it
       let item ={
         price,
         tokenId : i.tokenId.toNumber(),
@@ -36,7 +38,7 @@ export default function Home() {
       }
       return item
     }))
-
+    /// it is set to items because it returns a map of item object
     setNfts(items)
     setLoadingState('loaded')
   }
@@ -47,7 +49,7 @@ export default function Home() {
 
 
     async function buyNft(nft) {
-      const Web3Modal = new Web3Modal()
+      const web3Modal = new Web3Modal()
       const connection = await Web3Modal.connect()
       const provider = new ethers.providers.Web3Provider(connection)
 
@@ -70,6 +72,7 @@ export default function Home() {
       <div className="px-4" style={{ maxWidth :'1600px' }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           {
+            // here we loop through the nft that was set and using i as index and key we get each item in the nft
             nfts.map((nft, i) => (
               <div  key={i} className="border shadow rounded-xl overflow-hidden">
                 <img src = {nft.image}/>

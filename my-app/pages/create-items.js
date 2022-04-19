@@ -1,5 +1,5 @@
-import { ethers } from "ethers"
 import { useState } from "react"
+import { ethers } from 'ethers'
 import { create as ipfsHttpClient} from 'ipfs-http-client'
 import Web3Modal from "web3modal"
 import { useRouter } from "next/router"
@@ -40,7 +40,7 @@ export default function CreatItems() {
                 progress:(prog) => console.log(`received: ${prog}`)
             })
 
-            const url =`https://ipfs.infura.io:5001/${added.path}`
+            const url =`https://ipfs.infura.io/ipfs/${added.path}`
            createSale(url)
             
         } catch (error) {
